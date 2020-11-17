@@ -1,0 +1,32 @@
+apiVersion: apps/v1 #  Versão
+kind: Deployment # Tipo deployment
+metadata:
+  name: redis-master # Nome do deployment
+  labels: # Label app = redis
+    app: redis
+spec:
+  selector: 
+    matchLabels:
+      app: redis # Faz match com os labels que estão nos pods
+      role: master
+      tier: backend
+  replicas: 1
+  template: # Especificações do container
+    metadata: # Importante ser igual ao do seletor
+      labels:
+        app: redis
+        role: master
+        tier: backend
+    spec:
+      containers:
+      - name: master # Nome do container
+        image: k8s.gcr.io/redis:e2e  # Imagem
+        resources:
+          limits: # Limite máximo de recursos do container
+            memory: 150Mi
+            cpu: 150m # 1 core = 1000m (milicores) 200m = 20% do cpu. Posso utilizar também 0.5, 1, etc
+          requests: # Quero que o kubernetes me garanta. Limite minimo
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 6379 # Porta do container
